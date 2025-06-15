@@ -1,29 +1,22 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> 1839 </title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>1839</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box }
     body {
-      background-color: black;
+      background: black;
       color: lime;
       font-family: monospace;
       font-size: 1.4em;
       padding: 5vw;
       margin: 0;
       line-height: 1.6;
+      overflow-x: hidden;
     }
-
-    #console {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
+    #console { white-space: pre-wrap; word-wrap: break-word }
     input {
       background: black;
       color: lime;
@@ -36,55 +29,59 @@
       max-width: 100%;
       box-sizing: border-box;
     }
-
+    @keyframes blink {
+      0%,100%{opacity:1}50%{opacity:0}
+    }
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: lime;
+      animation: blink 1s step-start infinite;
+      vertical-align: bottom;
+    }
     @media (max-width: 400px) {
-      body {
-        font-size: 1.2em;
-        padding: 4vw;
-      }
-
-      input {
-        font-size: 1.1em;
-        padding: 0.5em;
-      }
+      body { font-size:1.2em; padding:4vw }
+      input { font-size:1.1em; padding:0.5em }
+    }
+    .glitch {
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      20% { text-shadow: -2px 0 blue; }
+      40% { text-shadow: 2px 0 red; }
+      60% { text-shadow: -2px 0 blue; }
+      80% { text-shadow: 2px 0 red; }
+      100% { text-shadow: -2px 0 blue; }
     }
   </style>
 </head>
 <body>
   <div id="console">
-    🎉 Tabriklaymiz! Siz Uzum Marketdan 1 mln so'mgacha bo'lgan mahsulotlarni 50% chegirma bilan olish imkoniyatiga egasiz!<br>
-    Promokodni olish uchun 1 deb yozing:
+    🎉 Tabriklaymiz! Promokod uchun 1 deb yozing:<span class="cursor"></span>
   </div>
-  <input type="text" id="userInput" autofocus>
+  <input id="userInput" autofocus/>
 
   <script>
     const input = document.getElementById("userInput");
     const consoleDiv = document.getElementById("console");
-
     let userResponded = false;
 
-    input.addEventListener("keydown", function (e) {
+    input.addEventListener("keydown", async e => {
       if (e.key === "Enter") {
         userResponded = true;
-        let userText = input.value.trim();
+        const txt = input.value.trim();
         input.remove();
-        if (userText === "1") {
-          showPromo();
-        } else {
-          runPrank(userText);
-        }
+        if (txt === "1") await showPromo();
+        else runPrank(txt);
       }
     });
 
-    // Wait 10s, then prompt user
     setTimeout(() => {
-      if (!userResponded) {
-        consoleDiv.innerHTML += "\n\n⌛ Iltimos, nimadir yozing...";
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
-      }
+      if (!userResponded) consoleDiv.innerHTML += "\n\n⌛ Iltimos, nimadir yozing...";
     }, 10000);
 
-    // After 20s, if still no input, start prank
     setTimeout(() => {
       if (!userResponded) {
         input.remove();
@@ -93,57 +90,123 @@
     }, 20000);
 
     async function showPromo() {
-      await printLine("\n✅ Tabriklaymiz! Promokodingiz: UZUM-50-OMAD", 1000);
-      await printLine("⚠️ Diqqat! Bunday saytlarda shaxsiy ma'lumotlaringizni kiritish xavfli bo'lishi mumkin.", 2000);
+      await typeLine("✅ Promokodingiz: UZUM-50-OMAD");
+      await delay(1000);
     }
 
     async function runPrank(userText) {
-      document.body.innerHTML = `
-        <div id="console" style="white-space: pre-wrap; color: lime; font-family: monospace; font-size: 1.4em; padding: 5vw; line-height: 1.6;"></div>
-      `;
-      const consoleDiv = document.getElementById("console");
-
-      function printLine(text, delay) {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            consoleDiv.innerHTML += "\n" + text;
-            consoleDiv.scrollTop = consoleDiv.scrollHeight;
-            resolve();
-          }, delay);
-        });
-      }
-
-      const lines = [
-        "\n💀 XATO buyruq olindi",
+      consoleDiv.innerHTML = "";
+      const sequence = [
+        "💀 XATO buyruq olindi",
         "🔍 Tizim fayllari skanerlanyapti...",
-        "🔐 Pin kodlar topilmoqda..."
+        "🔐 Ma'lumotlar nusxalashtirilyapti...",
+        "📁 Xotira skanerlanyapti..."
       ];
-
-      for (let line of lines) {
-        await printLine(line, 1500);
+      for (let line of sequence) {
+        await typeLine(line);
+        await delay(800);
       }
 
-      const progressLine = document.createElement("div");
-      progressLine.style.marginTop = "1em";
-      consoleDiv.appendChild(progressLine);
+      await showLoadingBar(60);
+      await delay(400);
 
-      for (let i = 0; i <= 100; i += 20) {
-        progressLine.textContent = `Jarayon: ${i}%`;
-        await new Promise(resolve => setTimeout(resolve, 500));
+      const remainingSequence = [
+        "📷 Kamera rasmlari olinmoqda...(1146 ta rasm topildi)",
+        "📇 Kontaktlar o‘qilmoqda... (349 ta topildi)",
+        "🛂 Passport skaneri ishga tushdi... (3 ta hujjat)",
+        "💳 Bank ma’lumotlari yig‘ilmoqda... (2 ta karta aniqlandi)",
+        "📶 Bluetooth qurilmalar aniqlanyapti... (3 ta: Hidden Tracker, SmartWatch, AirPods)",
+        "📲 Ijtimoiy tarmoqlar: Instagram, Telegram login topildi...",
+        "📸 Old kamera yoqildi... Yuz aniqlanmoqda..."
+      ];
+      for (let line of remainingSequence) {
+        await typeLine(line);
+        await delay(800);
       }
 
-      await printLine("\n⚠️ TIZIM BLOKLANDI", 1500);
-      await printLine("Tizimni blokdan ochish uchun passport ma'lumotlaringizni yuboring: hacker@darkweb.com 💳", 2000);
+      await showLoadingBar(30);
+      await delay(400);
+
+      try {
+        const battery = await navigator.getBattery();
+        const level = Math.round(battery.level * 100);
+        const charging = battery.charging ? " (Zaryadlanmoqda)" : " (Tez zaryadsizlanmoqda)";
+        await typeLine(`🔋 Batareya holati: ${level}%${charging}`);
+      } catch (e) {
+        await typeLine("🔋 Batareya holati: ?%");
+      }
+
+      const fakeIP = `🧠 IP manzilingiz: ${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`;
+      await typeLine(fakeIP);
+
+      await typeLine(`🌐 Joylashuv: Xorazm, Uzbekistan`);
+      const deviceDetails = getDeviceDetails();
+      await typeLine(`🖥 Operatsion tizim: ${deviceDetails.os}`);
+      await typeLine(`🌐 Brauzer: ${deviceDetails.browser}`);
+      await typeLine(`📱 Qurilma turi: ${deviceDetails.device}`);
+      await typeLine("👁‍🗨 Siz kuzatilmoqdasiz. Kamera yoqildi...");
+      await delay(1000);
+      await typeLine("\n⚠️ TIZIM BLOKLANDI");
+      await typeLine("\nMalumotlaringizni saqlash uchun 1 mln $ to'lang");
+
+      const endMsg = document.createElement("div");
+      endMsg.style.color = "#ff0";
+      endMsg.style.marginTop = "1em";
+      consoleDiv.appendChild(endMsg);
     }
 
-    function printLine(text, delay) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          consoleDiv.innerHTML += "\n" + text;
-          consoleDiv.scrollTop = consoleDiv.scrollHeight;
-          resolve();
-        }, delay);
-      });
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeLine(text) {
+      const line = document.createElement("div");
+      consoleDiv.appendChild(line);
+      for (let i = 0; i <= text.length; i++) {
+        line.textContent = text.slice(0, i);
+        await delay(30);
+      }
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+
+    function getDeviceDetails() {
+      const userAgent = navigator.userAgent;
+      let os = "Noma'lum";
+      if (userAgent.includes("Windows")) os = "Windows";
+      else if (userAgent.includes("Mac")) os = "MacOS";
+      else if (userAgent.includes("Linux")) os = "Linux";
+      else if (/Android/.test(userAgent)) os = "Android";
+      else if (/iPhone|iPad/.test(userAgent)) os = "iOS";
+
+      let browser = "Noma'lum";
+      if (/Chrome/.test(userAgent)) browser = "Chrome";
+      else if (/Firefox/.test(userAgent)) browser = "Firefox";
+      else if (/Safari/.test(userAgent) && !/Chrome/.test(userAgent)) browser = "Safari";
+      else if (/Edge/.test(userAgent)) browser = "Edge";
+
+      const device = /Mobi|Android/i.test(userAgent) ? "Mobil" : "Kompyuter";
+
+      return { os, browser, device };
+    }
+
+    async function showLoadingBar(speed = 100) {
+      const bar = document.createElement("div");
+      bar.style.border = "1px solid lime";
+      bar.style.height = "20px";
+      bar.style.margin = "10px 0";
+      bar.style.width = "100%";
+      consoleDiv.appendChild(bar);
+
+      const fill = document.createElement("div");
+      fill.style.background = "lime";
+      fill.style.height = "100%";
+      fill.style.width = "0%";
+      bar.appendChild(fill);
+
+      for (let i = 0; i <= 100; i += 5) {
+        fill.style.width = i + "%";
+        await delay(speed);
+      }
     }
   </script>
 </body>
