@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 1839 </title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      font-size: 1.4em;
+      padding: 5vw;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    #console {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    input {
+      background: black;
+      color: lime;
+      border: 1px solid lime;
+      font-family: monospace;
+      font-size: 1.2em;
+      margin-top: 1em;
+      padding: 0.6em;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 400px) {
+      body {
+        font-size: 1.2em;
+        padding: 4vw;
+      }
+
+      input {
+        font-size: 1.1em;
+        padding: 0.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="console">
+    🎉 Tabriklaymiz! Siz Uzum Marketdan 1 mln so'mgacha bo'lgan mahsulotlarni 50% chegirma bilan olish imkoniyatiga egasiz!<br>
+    Promokodni olish uchun 1 deb yozing:
+  </div>
+  <input type="text" id="userInput" autofocus>
+
+  <script>
+    const input = document.getElementById("userInput");
+    const consoleDiv = document.getElementById("console");
+
+    let userResponded = false;
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        userResponded = true;
+        let userText = input.value.trim();
+        input.remove();
+        if (userText === "1") {
+          showPromo();
+        } else {
+          runPrank(userText);
+        }
+      }
+    });
+
+    // Wait 10s, then prompt user
+    setTimeout(() => {
+      if (!userResponded) {
+        consoleDiv.innerHTML += "\n\n⌛ Iltimos, nimadir yozing...";
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      }
+    }, 10000);
+
+    // After 20s, if still no input, start prank
+    setTimeout(() => {
+      if (!userResponded) {
+        input.remove();
+        runPrank("");
+      }
+    }, 20000);
+
+    async function showPromo() {
+      await printLine("\n✅ Tabriklaymiz! Promokodingiz: UZUM-50-OMAD", 1000);
+      await printLine("⚠️ Diqqat! Bunday saytlarda shaxsiy ma'lumotlaringizni kiritish xavfli bo'lishi mumkin.", 2000);
+    }
+
+    async function runPrank(userText) {
+      document.body.innerHTML = `
+        <div id="console" style="white-space: pre-wrap; color: lime; font-family: monospace; font-size: 1.4em; padding: 5vw; line-height: 1.6;"></div>
+      `;
+      const consoleDiv = document.getElementById("console");
+
+      function printLine(text, delay) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            consoleDiv.innerHTML += "\n" + text;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            resolve();
+          }, delay);
+        });
+      }
+
+      const lines = [
+        "\n💀 XATO buyruq olindi",
+        "🔍 Tizim fayllari skanerlanyapti...",
+        "🔐 Pin kodlar topilmoqda..."
+      ];
+
+      for (let line of lines) {
+        await printLine(line, 1500);
+      }
+
+      const progressLine = document.createElement("div");
+      progressLine.style.marginTop = "1em";
+      consoleDiv.appendChild(progressLine);
+
+      for (let i = 0; i <= 100; i += 20) {
+        progressLine.textContent = `Jarayon: ${i}%`;
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      await printLine("\n⚠️ TIZIM BLOKLANDI", 1500);
+      await printLine("Tizimni blokdan ochish uchun passport ma'lumotlaringizni yuboring: hacker@darkweb.com 💳", 2000);
+    }
+
+    function printLine(text, delay) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          consoleDiv.innerHTML += "\n" + text;
+          consoleDiv.scrollTop = consoleDiv.scrollHeight;
+          resolve();
+        }, delay);
+      });
+    }
+  </script>
+</body>
+</html>
